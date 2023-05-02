@@ -12,6 +12,7 @@ st.title("DEMENTIA PREDICTION ")
 
 activities = ["Introduction", "Statistics", "Prediction", "Dementia Report", "About Us"]
 choice = st.sidebar.selectbox("Select Activities", activities)
+
 if choice == 'Introduction':
     st.markdown(
         "Dementia is a term used to describe a group of symptoms affecting memory, thinking and social abilities severely enough to interfere with your daily life. It isn't a specific disease, but several diseases can cause dementia. Though dementia generally involves memory loss, memory loss has different causes")
@@ -26,6 +27,7 @@ if choice == 'Introduction':
     st.write("Each one of those parameters have a particular effect when predicting dementia.")
     
 # ==========================================================================================================================
+
 elif choice == 'Statistics':
     import matplotlib.pyplot as plt
 
@@ -141,14 +143,7 @@ elif choice == 'Statistics':
     plt.ylabel('Social Economic Status(SES)')
     st.pyplot()
     plt.show()
-    st.subheader('Corelation Heatmap :')
-
-    df.groupby(['EDUC'])['SES'].median()
-    df["SES"].fillna(df.groupby("EDUC")["SES"].transform("median"), inplace=True)
-    pd.isnull(df['SES']).value_counts()
-    fig, ax = plt.subplots(figsize=(20, 10))
-    sns.heatmap(df.corr(), annot=True, ax=ax)
-    st.pyplot()
+    
     # ======================================================================
 
 elif choice == 'Prediction':
@@ -257,12 +252,7 @@ elif choice == 'Prediction':
     plt.ylabel('Social Economic Status(SES)')
     # st.pyplot()
     # plt.show()
-    df.groupby(['EDUC'])['SES'].median()
-    df["SES"].fillna(df.groupby("EDUC")["SES"].transform("median"), inplace=True)
-    pd.isnull(df['SES']).value_counts()
-    fig, ax = plt.subplots(figsize=(20, 10))
-    sns.heatmap(df.corr(), annot=True, ax=ax)
-    # st.pyplot()
+
     # ============================================================================================================================================    PREDICTION
 
     gender = st.sidebar.selectbox(
