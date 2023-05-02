@@ -4,3 +4,4 @@ seaborn==0.12.2
 matplotlib==3.6.3
 scikit-learn==1.2.1
 plyer==2.1.0
+mysql-connector-python==8.0.32
