@@ -1,13 +1,16 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-
+import seaborn as sns
+import matplotlib.pyplot as plt
 import pickle
 from PIL import Image
 
+sns.set()
+
 st.title("DEMENTIA PREDICTION ")
 
-activities = ["Introduction", "Prediction", "Dementia Report", "About Us"]
+activities = ["Introduction", "Statistics", "Prediction", "Dementia Report", "About Us"]
 choice = st.sidebar.selectbox("Select Activities", activities)
 if choice == 'Introduction':
     st.markdown(
@@ -21,14 +24,245 @@ if choice == 'Introduction':
     st.write("nWBV - Normalised  Whole Brain Volume")
     st.write("ASF - Atlas Scaling Factor")
     st.write("Each one of those parameters have a particular effect when predicting dementia.")
+    
 # ==========================================================================================================================
+elif choice == 'Statistics':
+    import matplotlib.pyplot as plt
 
+    st.title("Wanna Clarify about your Dementia status ?")
+    df = pd.read_csv(r"oasis_longitudinal.csv")
+    st.set_option('deprecation.showPyplotGlobalUse', False)
+    # ================================================
+    df = df.loc[df['Visit'] == 1]
+    # use first visit data only because of the analysis
+    df = df.reset_index(drop=True)
+    # reset index after filtering first visit data
+    df['M/F'] = df['M/F'].replace(['F', 'M'], [0, 1])
+    # Male/Female column
+    df['Group'] = df['Group'].replace(['Converted'], ['Demented'])
+    # Target variable
+    df['Group'] = df['Group'].replace(['Demented', 'Nondemented'], [1, 0])
+    # Target variable
+    df = df.drop(['MRI ID', 'Visit', 'Hand'], axis=1)
+
+
+    def bar(feature):
+        Demented = df[df['Group'] == 1][feature].value_counts()
+        Nondemented = df[df['Group'] == 0][feature].value_counts()
+        _bar = pd.DataFrame([Demented, Nondemented])
+        _bar.index = ['Demented', 'Nondemented']
+        _bar.plot(kind='bar', stacked=True, figsize=(8, 5))
+
+
+    # Gender  and  Group ( Female=0, Male=1)
+    bar('M/F')
+    plt.xlabel('Group')
+    plt.ylabel('Number of patients')
+    plt.legend()
+    plt.title('Gender v/s Demented rate')
+    # =================================================================
+    # Create a bar chart using the value_counts() method on the 'M/F' column of the DataFrame
+    dementia_by_gender = df[df['Group'] == 1]['M/F'].value_counts()
+    dementia_by_gender.plot(kind='bar')
+    # Set the title and axis labels
+    st.subheader('Dementia Distribution by Gender :')
+    plt.title('Dementia Distribution by Gender')
+    plt.xlabel('Gender (Female=0, Male=1)')
+    plt.ylabel('Number of Patients')
+    # Display the chart in Streamlit
+    st.pyplot()
+    # =====================================================================
+    # MMSE : Mini Mental State Examination
+    st.subheader('Dementia Distribution by MMSE :')
+    facetgrid = sns.FacetGrid(df, hue="Group", aspect=3)
+    facetgrid.map(sns.kdeplot, 'MMSE', shade=True)
+    facetgrid.set(xlim=(0, df['MMSE'].max()))
+    facetgrid.add_legend()
+    plt.xlim(16.00)
+    st.pyplot()
+    # Graph on each variable
+    st.subheader('Dementia Distribution by ASF :')
+    # bar_chart('ASF') = Atlas Scaling Factor
+    facetgrid = sns.FacetGrid(df, hue="Group", aspect=3)
+    facetgrid.map(sns.kdeplot, 'ASF', shade=True)
+    facetgrid.set(xlim=(0, df['ASF'].max()))
+    facetgrid.add_legend()
+    plt.xlim(0.6, 1.8)
+    st.pyplot()
+    st.subheader('Dementia Distribution by ETIV :')
+    # eTIV = Estimated Total Intracranial Volume
+    facetgrid = sns.FacetGrid(df, hue="Group", aspect=3)
+    facetgrid.map(sns.kdeplot, 'eTIV', shade=True)
+    facetgrid.set(xlim=(0, df['eTIV'].max()))
+    facetgrid.add_legend()
+    plt.xlim(900, 2200)
+    st.pyplot()
+    st.subheader('Dementia Distribution by nWBV :')
+    # 'nWBV' = Normalized Whole Brain Volume
+    # Nondemented = 0, Demented =1
+    facetgrid = sns.FacetGrid(df, hue="Group", aspect=3)
+    facetgrid.map(sns.kdeplot, 'nWBV', shade=True)
+    facetgrid.set(xlim=(0, df['nWBV'].max()))
+    facetgrid.add_legend()
+    plt.xlim(0.6, 0.9)
+    st.pyplot()
+    st.subheader('Dementia Distribution by AGE :')
+    # AGE.
+    facetgrid = sns.FacetGrid(df, hue="Group", aspect=3)
+    facetgrid.map(sns.kdeplot, 'Age', shade=True)
+    facetgrid.set(xlim=(0, df['Age'].max()))
+    facetgrid.add_legend()
+    plt.xlim(50, 110)
+    st.pyplot()
+    # st.title('Dementia Distribution by YEARS OF EDUCATION :')
+    # 'EDUC' = Years of Education
+    facetgrid = sns.FacetGrid(df, hue="Group", aspect=3)
+    facetgrid.map(sns.kdeplot, 'EDUC', shade=True)
+    facetgrid.set(xlim=(df['EDUC'].min(), df['EDUC'].max()))
+    facetgrid.add_legend()
+    plt.ylim(0, 0.16)
+    plt.xlim(2, 25)
+    df.isnull().sum()
+    df = df.dropna(axis=0, how="any")
+    pd.isnull(df).sum()
+    df['Group'].value_counts()
+    st.subheader('Dementia Distribution by YEARS OF EDUCATION AND SES :')
+    # Draw scatter plot between EDUC and SES
+    x = df['EDUC']
+    y = df['SES']
+    ses_not_null = y[~y.isnull()].index
+    x = x[ses_not_null]
+    y = y[ses_not_null]
+    # Trend line
+    poly = np.polyfit(x, y, 1)
+    pp = np.poly1d(poly)
+    plt.plot(x, y, 'go', x, pp(x), "b--")
+    plt.xlabel('Education Level(EDUC)')
+    plt.ylabel('Social Economic Status(SES)')
+    st.pyplot()
+    plt.show()
+    st.subheader('Corelation Heatmap :')
+
+    df.groupby(['EDUC'])['SES'].median()
+    df["SES"].fillna(df.groupby("EDUC")["SES"].transform("median"), inplace=True)
+    pd.isnull(df['SES']).value_counts()
+    fig, ax = plt.subplots(figsize=(20, 10))
+    sns.heatmap(df.corr(), annot=True, ax=ax)
+    st.pyplot()
+    # ======================================================================
 
 elif choice == 'Prediction':
-    import matplotlib.pyplot as plt
 
     st.title("Check your Dementia status...")
     df = pd.read_csv(r"oasis_longitudinal.csv")
+    st.set_option('deprecation.showPyplotGlobalUse', False)
+    # ================================================
+    df = df.loc[df['Visit'] == 1]
+    # use first visit data only because of the analysis
+    df = df.reset_index(drop=True)
+    # reset index after filtering first visit data
+    df['M/F'] = df['M/F'].replace(['F', 'M'], [0, 1])
+    # Male/Female column
+    df['Group'] = df['Group'].replace(['Converted'], ['Demented'])
+    # Target variable
+    df['Group'] = df['Group'].replace(['Demented', 'Nondemented'], [1, 0])
+    # Target variable
+    df = df.drop(['MRI ID', 'Visit', 'Hand'], axis=1)
+
+
+    def bar(feature):
+        Demented = df[df['Group'] == 1][feature].value_counts()
+        Nondemented = df[df['Group'] == 0][feature].value_counts()
+        _bar = pd.DataFrame([Demented, Nondemented])
+        _bar.index = ['Demented', 'Nondemented']
+        _bar.plot(kind='bar', stacked=True, figsize=(8, 5))
+
+
+    # Gender  and  Group ( Female=0, Male=1)
+    bar('M/F')
+    plt.xlabel('Group')
+    plt.ylabel('Number of patients')
+    plt.legend()
+    plt.title('Gender v/s Demented rate')
+    # =================================================================
+    # Create a bar chart using the value_counts() method on the 'M/F' column of the DataFrame
+    dementia_by_gender = df[df['Group'] == 1]['M/F'].value_counts()
+    dementia_by_gender.plot(kind='bar')
+    # Set the title and axis labels
+    plt.title('Dementia Distribution by Gender')
+    plt.xlabel('Gender (Female=0, Male=1)')
+    plt.ylabel('Number of Patients')
+    # Display the chart in Streamlit
+    # st.pyplot()
+    # =====================================================================
+    # MMSE : Mini Mental State Examination
+    facetgrid = sns.FacetGrid(df, hue="Group", aspect=3)
+    facetgrid.map(sns.kdeplot, 'MMSE', shade=True)
+    facetgrid.set(xlim=(0, df['MMSE'].max()))
+    facetgrid.add_legend()
+    plt.xlim(16.00)
+    # st.pyplot()
+    # Graph on each variable
+    # bar_chart('ASF') = Atlas Scaling Factor
+    facetgrid = sns.FacetGrid(df, hue="Group", aspect=3)
+    facetgrid.map(sns.kdeplot, 'ASF', shade=True)
+    facetgrid.set(xlim=(0, df['ASF'].max()))
+    facetgrid.add_legend()
+    plt.xlim(0.6, 1.8)
+    # st.pyplot()
+    # eTIV = Estimated Total Intracranial Volume
+    facetgrid = sns.FacetGrid(df, hue="Group", aspect=3)
+    facetgrid.map(sns.kdeplot, 'eTIV', shade=True)
+    facetgrid.set(xlim=(0, df['eTIV'].max()))
+    facetgrid.add_legend()
+    plt.xlim(900, 2200)
+    # st.pyplot()
+    # 'nWBV' = Normalized Whole Brain Volume
+    # Nondemented = 0, Demented =1
+    facetgrid = sns.FacetGrid(df, hue="Group", aspect=3)
+    facetgrid.map(sns.kdeplot, 'nWBV', shade=True)
+    facetgrid.set(xlim=(0, df['nWBV'].max()))
+    facetgrid.add_legend()
+    plt.xlim(0.6, 0.9)
+    # st.pyplot()
+    # AGE.
+    facetgrid = sns.FacetGrid(df, hue="Group", aspect=3)
+    facetgrid.map(sns.kdeplot, 'Age', shade=True)
+    facetgrid.set(xlim=(0, df['Age'].max()))
+    facetgrid.add_legend()
+    plt.xlim(50, 110)
+    # st.pyplot()
+    # 'EDUC' = Years of Education
+    facetgrid = sns.FacetGrid(df, hue="Group", aspect=3)
+    facetgrid.map(sns.kdeplot, 'EDUC', shade=True)
+    facetgrid.set(xlim=(df['EDUC'].min(), df['EDUC'].max()))
+    facetgrid.add_legend()
+    plt.ylim(0, 0.16)
+    plt.xlim(2, 25)
+    df.isnull().sum()
+    df = df.dropna(axis=0, how="any")
+    pd.isnull(df).sum()
+    df['Group'].value_counts()
+    # Draw scatter plot between EDUC and SES
+    x = df['EDUC']
+    y = df['SES']
+    ses_not_null = y[~y.isnull()].index
+    x = x[ses_not_null]
+    y = y[ses_not_null]
+    # Trend line
+    poly = np.polyfit(x, y, 1)
+    pp = np.poly1d(poly)
+    plt.plot(x, y, 'go', x, pp(x), "b--")
+    plt.xlabel('Education Level(EDUC)')
+    plt.ylabel('Social Economic Status(SES)')
+    # st.pyplot()
+    # plt.show()
+    df.groupby(['EDUC'])['SES'].median()
+    df["SES"].fillna(df.groupby("EDUC")["SES"].transform("median"), inplace=True)
+    pd.isnull(df['SES']).value_counts()
+    fig, ax = plt.subplots(figsize=(20, 10))
+    sns.heatmap(df.corr(), annot=True, ax=ax)
+    # st.pyplot()
     # ============================================================================================================================================    PREDICTION
 
     gender = st.sidebar.selectbox(
