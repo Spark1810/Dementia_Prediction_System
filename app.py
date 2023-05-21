@@ -430,9 +430,6 @@ elif choice == 'Prediction':
         # Display the updated dataframe as a table in Streamlit
         st.table(df3)
 
-
-
-
 # ===============================================================================
 
 elif choice == 'Dementia Report':
@@ -551,7 +548,8 @@ elif choice == 'Dementia Report':
     with col4:
         st.plotly_chart(chart)
 
+        
 # ============================================================================================
 elif choice == "About Us":
-    st.write("CREATED BY SURYA RAJIV KUMAR - 21BDS053\n UNDER THE GUIDENCE OF")
+    st.write("CREATED BY SURYA RAJIV KUMAR AND SUDHARSHAN VIJAY SK")
 
