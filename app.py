@@ -11,7 +11,7 @@ sns.set()
 st.title("DEMENTIA PREDICTION ")
 
 activities = ["Introduction", "Statistics", "Prediction", "Dementia Report", "About Us"]
-choice = st.sidebar.selectbox("Select Activities", activities)
+choice = st.sidebar.selectbox("Select Activities", activities) 
 
 if choice == 'Introduction':
     st.markdown(
