@@ -61,7 +61,7 @@ elif choice == 'Statistics':
     plt.xlabel('Group')
     plt.ylabel('Number of patients')
     plt.legend()
-    plt.title('Gender v/s Demented rate')
+    plt.title('Gender v/s Demented rate') 
     # =================================================================
     # Create a bar chart using the value_counts() method on the 'M/F' column of the DataFrame
     dementia_by_gender = df[df['Group'] == 1]['M/F'].value_counts()
