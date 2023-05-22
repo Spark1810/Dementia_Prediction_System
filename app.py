@@ -73,7 +73,8 @@ elif choice == 'Statistics':
     plt.ylabel('Number of Patients')
     # Display the chart in Streamlit
     st.pyplot()
-    # =====================================================================
+    # ======================================================================
+    
     # MMSE : Mini Mental State Examination
     st.subheader('Dementia Distribution by MMSE :')
     facetgrid = sns.FacetGrid(df, hue="Group", aspect=3)
