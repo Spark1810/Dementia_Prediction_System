@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import pickle
 from PIL import Image
 
-sns.set() 
+sns.set()  
 
 st.title("DEMENTIA PREDICTION ")
 
