@@ -9,7 +9,7 @@ from PIL import Image
 sns.set()  
 
 st.title("DEMENTIA PREDICTION ")
-
+ 
 activities = ["Introduction", "Statistics", "Prediction", "Dementia Report", "About Us"]
 choice = st.sidebar.selectbox("Select Activities", activities) 
 
