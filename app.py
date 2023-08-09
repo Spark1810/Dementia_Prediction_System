@@ -8,31 +8,30 @@ from PIL import Image
 
 sns.set() 
 
-st.title("DEMENTIA PREDICTION ")
- 
-activities = ["Introduction", "Statistics", "Prediction", "Dementia Report", "About Us"]
-choice = st.sidebar.selectbox("Select Activities", activities) 
+st.title("Alzheimer Detection ")
 
+activities = ["Introduction", "Statistics", "Prediction", "Alzheimer Report", "About Us"]
+choice = st.sidebar.selectbox("Select Activities", activities)
 if choice == 'Introduction':
     st.markdown(
-        "Dementia is a term used to describe a group of symptoms affecting memory, thinking and social abilities severely enough to interfere with your daily life. It isn't a specific disease, but several diseases can cause dementia. Though dementia generally involves memory loss, memory loss has different causes")
+        "Alzheimer is a term used to describe a group of symptoms affecting memory, thinking and social abilities severely enough to interfere with your daily life. It isn't a specific disease, but several diseases can cause Alzheimer. Though Alzheimer generally involves memory loss, memory loss has different causes")
     st.title("A look into the scientific side of demenetia ")
     st.write("Parameters taken")
-    st.write("A major parameters for dementia prediction is MMSE,SES,eTIV,nWBV,ASF")
+    st.write("A major parameters for Alzheimer prediction is MMSE,SES,eTIV,nWBV,ASF")
     st.write("MMSE - Mini Mental State Examination")
     st.write("SES - Social Economic State")
     st.write("eTIV - Estimated Total Intracranial Volume")
     st.write("nWBV - Normalised  Whole Brain Volume")
     st.write("ASF - Atlas Scaling Factor")
-    st.write("Each one of those parameters have a particular effect when predicting dementia.")
+    st.write("Each one of those parameters have a particular effect when predicting Alzheimer.")
     
 # ==========================================================================================================================
 
 elif choice == 'Statistics':
     import matplotlib.pyplot as plt
 
-    st.title("Wanna Clarify about your Dementia status ?")
-    df = pd.read_csv(r"oasis_longitudinal.csv")
+    st.title("Wanna Clarify about your Alzheimer status ?")
+    df = pd.read_csv("oasis_longitudinal.csv")
     st.set_option('deprecation.showPyplotGlobalUse', False)
     # ================================================
     df = df.loc[df['Visit'] == 1]
@@ -61,14 +60,14 @@ elif choice == 'Statistics':
     plt.xlabel('Group')
     plt.ylabel('Number of patients')
     plt.legend()
-    plt.title('Gender v/s Demented rate') 
+    plt.title('Gender v/s Demented rate')
     # =================================================================
     # Create a bar chart using the value_counts() method on the 'M/F' column of the DataFrame
-    dementia_by_gender = df[df['Group'] == 1]['M/F'].value_counts()
-    dementia_by_gender.plot(kind='bar')
+    Alzheimer_by_gender = df[df['Group'] == 1]['M/F'].value_counts()
+    Alzheimer_by_gender.plot(kind='bar')
     # Set the title and axis labels
-    st.subheader('Dementia Distribution by Gender :')
-    plt.title('Dementia Distribution by Gender')
+    st.subheader('Alzheimer Distribution by Gender :')
+    plt.title('Alzheimer Distribution by Gender')
     plt.xlabel('Gender (Female=0, Male=1)')
     plt.ylabel('Number of Patients')
     # Display the chart in Streamlit
