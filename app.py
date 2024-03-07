@@ -551,5 +551,5 @@ elif choice == 'Dementia Report':
         
 # ============================================================================================
 elif choice == "About Us":
-    st.write("CREATED BY SURYA RAJIV KUMAR AND SUDHARSHAN VIJAY SK")
+    st.info("CREATED BY AKSHITH C V")
 
